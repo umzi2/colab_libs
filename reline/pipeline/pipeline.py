@@ -31,7 +31,7 @@ class Pipeline:
                 data = node.process(data)
                 for img in tqdm(data, desc="Processing Images", disable=not with_tqdm):
                     img = [img]
-                    local_node_index = nodes_index+1
+                    local_node_index = nodes_index + 1
                     for node in self.nodes[local_node_index:]:
                         img = node.process(img)
                         local_node_index += 1
@@ -42,6 +42,10 @@ class Pipeline:
                 nodes_index += 1
             else:
                 nodes_index += 1
+        return data
+
+    def node_remove(self):
+        del self.nodes
 
     @classmethod
     def from_json(cls, data: Dict) -> Pipeline:
