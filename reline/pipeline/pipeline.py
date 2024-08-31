@@ -8,7 +8,7 @@ import numpy as np
 from tqdm import tqdm
 from moviepy.editor import VideoFileClip
 
-from ..nodes import INTERNAL_REGISTRY, UpscaleNode
+from ..nodes import INTERNAL_REGISTRY
 from ..static import Node
 from ..nodes.file_reader import FileReaderNode
 from ..nodes.folder_reader import FolderReaderNode
@@ -47,12 +47,6 @@ class Pipeline:
             else:
                 nodes_index += 1
         del data
-        for node in self.nodes:
-            if isinstance(node, UpscaleNode):
-                if node.device == 'cuda':
-                    from resselt.utils.upscaler import empty_cuda_cache
-
-                    empty_cuda_cache()
 
     def process_frame(self, frame):
         frame = frame.astype(np.float32) / 255
