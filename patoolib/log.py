@@ -19,6 +19,7 @@ import sys
 import time
 import locale
 import logging
+import platform
 from . import configuration
 
 
@@ -46,7 +47,7 @@ def encode_safe(*args, encoding=default_encoding):
     with the given encoding
     """
     return " ".join(
-        [str(arg).encode(encoding, errors="replace").decode() for arg in args]
+        [str(arg).encode(encoding, errors="replace").decode(encoding) for arg in args]
     )
 
 
@@ -90,6 +91,7 @@ I can work with ;) .
 
 {configuration.App}
 Python {sys.version} on {sys.platform}
+Platform: {platform.platform()}
 Local time: {now}
 sys.orig_argv: {sys.orig_argv}
 Environment:

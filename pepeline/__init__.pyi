@@ -188,6 +188,15 @@ def noise_generate(
     \n lacunarity: float32
     \n seed: uint"""
 
+class ResizeFilters(enum):
+    Nearest = 0,
+    Box = 1,
+    Bilinear = 2,
+    Hamming = 3,
+    CatmullRom=  4,
+    Mitchell = 5,
+    Gaussian = 6,
+    Lanczos3 = 7
 
 def save(
         array: np.ndarray,
@@ -196,3 +205,10 @@ def save(
     """function to save an image, currently supports:
                   \n     f32 0-1 array
                   \n     u8 0-255 array"""
+def resize_img(
+    input: np.ndarray,
+    size: tuple[int,int],
+    filter: Optional[ResizeFilters] = ResizeFilters.Nearest,
+    conv: bool = False,
+    sampling:int = None
+) -> np.ndarray:...
