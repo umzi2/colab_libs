@@ -28,8 +28,10 @@ class UpscaleNode(Node[UpscaleOptions]):
 
         if not torch.cuda.is_available() and not options.allow_cpu_upscale:
             raise 'CUDA is not available. If you want scale with CPU use `allow_cpu_upscale` option'
-
-        state_dict = torch.load(options.model,weights_only=False)
+        try:
+            state_dict = torch.load(options.model,weights_only=True)
+        except UnpicklingError:
+            state_dict = torch.load(options.model,weights_only=False)
         self.model = global_registry.load_from_state_dict(state_dict)
         self.model_parameters = self.model.parameters()
         self.tiler = self._create_tiler()
