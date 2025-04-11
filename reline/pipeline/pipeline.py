@@ -58,13 +58,7 @@ class Pipeline:
             frame = cv2.cvtColor(frame, cv2.COLOR_GRAY2RGB)
         return np.clip(frame * 255, 0, 255).astype(np.uint8)
 
-    def process_video(self, in_folder, out_folder, codec):
-        video = VideoFileClip(in_folder).to_RGB()
-        processed_video = video.fl_image(self.process_frame)
-        audio = video.audio
-        final_video = processed_video.set_audio(audio)
-        os.makedirs(os.path.dirname(out_folder), exist_ok=True)
-        final_video.write_videofile(out_folder, codec=codec)
+
 
     @classmethod
     def from_json(cls, data: Dict) -> Pipeline:
