@@ -6,7 +6,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from resselt.archs.utils import block as B
+from ...utilities import block as B
 
 
 class RRDBNet(nn.Module):
@@ -42,9 +42,8 @@ class RRDBNet(nn.Module):
             mode: Convolution mode
         """
         super().__init__()
-
         self.shuffle_factor = shuffle_factor
-        self.scale = scale
+        self.scale = scale // shuffle_factor if shuffle_factor else scale
 
         upsample_block = {
             'upconv': B.upconv_block,

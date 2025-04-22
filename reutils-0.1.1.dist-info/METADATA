@@ -1,0 +1,6 @@
+Metadata-Version: 2.4
+Name: reutils
+Version: 0.1.1
+Requires-Python: >=3.10
+Requires-Dist: torch>=2.6.0
+Requires-Dist: torchvision>=0.21.0
