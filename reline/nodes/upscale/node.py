@@ -34,7 +34,7 @@ class UpscaleNode(Node[UpscaleOptions]):
         if not torch.cuda.is_available() and not options.allow_cpu_upscale:
             raise 'CUDA is not available. If you want scale with CPU use `allow_cpu_upscale` option'
 
-        self.model = load_from_file(options.model)
+        self.model = load_from_file(options.model).eval()
         self.tiler = self._create_tiler()
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         if options.dtype == 'F16':
@@ -43,6 +43,7 @@ class UpscaleNode(Node[UpscaleOptions]):
             self.dtype = torch.bfloat16
         else:
             self.dtype = torch.float32
+        self.model.to(self.dtype)
         if self.device == 'cuda':
             empty_cuda_cache()
 
