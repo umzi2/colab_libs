@@ -29,7 +29,7 @@ def tensor2image(
     tensor: list[torch.Tensor] | torch.Tensor,
     dtype=np.float32,
 ) -> list[np.ndarray] | np.ndarray:
-    tensor = tensor.squeeze(0).detach().cpu()
+    tensor = tensor.float().squeeze(0).detach().cpu()
 
     if tensor.dtype != torch.float32:
         tensor = tensor.float()
