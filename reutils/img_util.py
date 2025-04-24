@@ -18,7 +18,7 @@ def image2tensor(
     else:
         img = torch.from_numpy(img).permute(2, 0, 1)
 
-    unf = img.unsqueeze(0)
+    img = img.unsqueeze(0)
 
     if img.dtype != dtype:
         img = img.to(dtype)
