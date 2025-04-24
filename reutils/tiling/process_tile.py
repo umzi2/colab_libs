@@ -97,19 +97,12 @@ def process_tiles(
                 x_overlap = TileOverlap(start=x_seg.start_padding * scale, end=x_seg.end_padding * scale)
                 row_blender.add_tile(processed_tile, x_overlap)
 
-                # Удаляем всё, что может задержаться в памяти
-                del tile, tensor, output, processed_tile, x_overlap
-                gc.collect()
-
             processed_row = row_blender.get_result()
 
             y_overlap = TileOverlap(start=y_seg.start_padding * scale, end=y_seg.end_padding * scale)
             result_blender.add_tile(processed_row, y_overlap)
 
-            del row, row_blender, processed_row, y_overlap
-            gc.collect()
-
         result = result_blender.get_result()
-        del result_blender
+        del result_blender, tile, tensor, output, processed_tile, x_overlap, row, row_blender, processed_row, y_overlap
         gc.collect()
-
+    return result.squeeze()
