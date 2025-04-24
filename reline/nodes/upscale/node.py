@@ -8,7 +8,7 @@ from reutils.tiling import MaxTileSize, ExactTileSize, NoTiling, process_tiles
 from pepeline import cvt_color, CvtType
 from reline.static import Node, NodeOptions, ImageFile
 import logging
-
+import gc
 Tiler = Literal['exact', 'max', 'no_tiling']
 DType = Literal['F32', 'F16', 'BF16']
 
@@ -16,6 +16,7 @@ DType = Literal['F32', 'F16', 'BF16']
 def empty_cuda_cache():
     torch.cuda.empty_cache()
     torch.cuda.ipc_collect()
+    gc.collect()
 
 
 @dataclass(frozen=True)
