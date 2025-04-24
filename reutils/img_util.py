@@ -50,9 +50,6 @@ def tensor2image(
         else:
             tensor = tensor.permute(1, 2, 0).numpy()
 
-        if tensor.dtype.is_floating_point and dtype == np.uint8:
-            tensor = (tensor * 255.0).round()
-
         return tensor.astype(dtype)
 
     if isinstance(value, list):
