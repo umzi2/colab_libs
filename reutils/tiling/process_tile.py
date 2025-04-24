@@ -98,10 +98,12 @@ def process_tiles(
 
                 y_overlap = TileOverlap(start=y_seg.start_padding * scale, end=y_seg.end_padding * scale)
                 result_blender.add_tile(processed_row, y_overlap)
+                del processed_row, y_overlap
 
             result = result_blender.get_result()
-
-            return result.squeeze()
+            break
+            
         except torch.cuda.OutOfMemoryError:
             tile_size = tiler.split(tile_size)
             torch.cuda.empty_cache()
+    return result.squeeze()
