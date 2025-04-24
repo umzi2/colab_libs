@@ -15,20 +15,16 @@ def image2tensor(
 ) -> list[Tensor] | Tensor:
     def _to_tensor(img: np.ndarray) -> torch.Tensor:
         if len(img.shape) == 2:
-            tensor = torch.from_numpy(img[None, ...])
+            img = torch.from_numpy(img[None, ...])
         else:
-            tensor = torch.from_numpy(img).permute(2, 0, 1)
+            img = torch.from_numpy(img).permute(2, 0, 1)
 
-        if img.dtype == np.uint8 and dtype.is_floating_point:
-            tensor = tensor.to(dtype)
-            tensor.div_(255)
-
-        tensor.unsqueeze_(0)
+        img.unsqueeze_(0)
 
         if tensor.dtype != dtype:
-            tensor = tensor.to(dtype)
+            img = img.to(dtype)
 
-        return tensor
+        return img
 
     if isinstance(value, list):
         return [_to_tensor(i) for i in value]
