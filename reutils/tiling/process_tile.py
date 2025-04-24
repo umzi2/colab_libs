@@ -49,6 +49,8 @@ def split_into_segments(length: int, tile_size: int, overlap: int) -> list[Segme
     return result
 
 
+import gc  # для ручного вызова сборщика мусора
+
 def process_tiles(
     img: np.ndarray,
     model: torch.nn.Module,
@@ -60,12 +62,13 @@ def process_tiles(
     amp: bool = True,
 ) -> np.ndarray:
     if len(img.shape) == 2:
-        img = img[...,None]
+        img = img[..., None]
 
     h, w, c = get_h_w_c(img)
     tile_size = tiler.starting_tile_size(w, h, c)
 
     model = model.to(device, dtype=dtype).eval()
+
     with torch.inference_mode():
         result_blender = TileBlender(h * scale, w * scale, c, BlendDirection.Y)
         y_segments = split_into_segments(h, tile_size[1], overlap)
@@ -76,29 +79,37 @@ def process_tiles(
             row = img[y_start:y_end, :, :]
 
             row_blender = TileBlender((y_end - y_start) * scale, w * scale, c, BlendDirection.X)
-
             x_segments = split_into_segments(w, tile_size[0], overlap)
+
             for x_seg in x_segments:
                 x_start = x_seg.start - x_seg.start_padding
                 x_end = x_seg.end + x_seg.end_padding
-                tile = row[:, x_start:x_end, :]
-                tensor = image2tensor(tile, dtype=dtype).to(device)
-                with torch.autocast(device_type=str(device), dtype=dtype, enabled=amp):
-                    
-                        tensor = model(tensor)
 
-                processed_tile = tensor2image(tensor)
+                tile = row[:, x_start:x_end, :]
+
+                tensor = image2tensor(tile, dtype=dtype).to(device)
+
+                with torch.autocast(device_type=str(device), dtype=dtype, enabled=amp):
+                    output = model(tensor)
+
+                processed_tile = tensor2image(output)
 
                 x_overlap = TileOverlap(start=x_seg.start_padding * scale, end=x_seg.end_padding * scale)
                 row_blender.add_tile(processed_tile, x_overlap)
+
+                # Удаляем всё, что может задержаться в памяти
+                del tile, tensor, output, processed_tile, x_overlap
+                gc.collect()
 
             processed_row = row_blender.get_result()
 
             y_overlap = TileOverlap(start=y_seg.start_padding * scale, end=y_seg.end_padding * scale)
             result_blender.add_tile(processed_row, y_overlap)
-            del processed_row, y_overlap
+
+            del row, row_blender, processed_row, y_overlap
+            gc.collect()
 
         result = result_blender.get_result()
- 
+        del result_blender
+        gc.collect()
 
-    return result.squeeze()
