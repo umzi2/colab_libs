@@ -67,8 +67,6 @@ def process_tiles(
     h, w, c = get_h_w_c(img)
     tile_size = tiler.starting_tile_size(w, h, c)
 
-    model = model.to(device, dtype=dtype).eval()
-
     with torch.inference_mode():
         result_blender = TileBlender(h * scale, w * scale, c, BlendDirection.Y)
         y_segments = split_into_segments(h, tile_size[1], overlap)
