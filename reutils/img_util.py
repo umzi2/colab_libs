@@ -46,14 +46,14 @@ def tensor2image(
             tensor = tensor.float()
 
         if len(tensor.shape) == 2:
-            img = tensor.numpy()
+            tensor = tensor.numpy()
         else:
-            img = tensor.permute(1, 2, 0).numpy()
+            tensor = tensor.permute(1, 2, 0).numpy()
 
         if tensor.dtype.is_floating_point and dtype == np.uint8:
-            img = (img * 255.0).round()
+            tensor = (tensor * 255.0).round()
 
-        return img.astype(dtype, copy=False)
+        return tensor.astype(dtype)
 
     if isinstance(value, list):
         return [_to_ndarray(i) for i in value]
