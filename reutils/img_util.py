@@ -21,7 +21,7 @@ def image2tensor(
 
         img.unsqueeze_(0)
 
-        if tensor.dtype != dtype:
+        if img.dtype != dtype:
             img = img.to(dtype)
 
         return img
