@@ -44,7 +44,7 @@ class UpscaleNode(Node[UpscaleOptions]):
             self.dtype = torch.bfloat16
         else:
             self.dtype = torch.float32
-        self.model.to(self.dtype)
+        self.model.to(self.device)
         if self.device == 'cuda':
             empty_cuda_cache()
 
